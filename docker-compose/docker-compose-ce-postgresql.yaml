@@ -1,0 +1,47 @@
+version: "3.7"
+services:
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "cipherguar"
+      POSTGRES_USER: "cipherguar"
+      POSTGRES_PASSWORD: "P4ssb0lt"
+    volumes:
+      - database_volume:/var/lib/postgresql/data
+
+  cipherguar:
+    image: khulnasoft/cipherguard:latest
+    #Alternatively you can use rootless:
+    #image: khulnasoft/cipherguard:latest-ce-non-root
+    restart: unless-stopped
+    tty: true
+    depends_on:
+      - db
+    environment:
+      APP_FULL_BASE_URL: https://cipherguar.local
+      DATASOURCES_DEFAULT_DRIVER: Cake\Database\Driver\Postgres
+      DATASOURCES_DEFAULT_ENCODING: "utf8"
+      DATASOURCES_DEFAULT_URL: "postgres://cipherguar:P4ssb0lt@db:5432/cipherguar?schema=cipherguar"
+      EMAIL_TRANSPORT_DEFAULT_HOST: "smtp.domain.tld"
+      EMAIL_TRANSPORT_DEFAULT_PORT: 587
+    volumes:
+      - gpg_volume:/etc/cipherguar/gpg
+      - jwt_volume:/etc/cipherguar/jwt
+      #- ./cert.pem:/etc/ssl/certs/certificate.crt:ro
+      #- ./key.pem:/etc/ssl/certs/certificate.key:ro
+      #- ./cert.pem:/etc/cipherguar/certs/certificate.crt:ro
+      #- ./key.pem:/etc/cipherguar/certs/certificate.key:ro
+    command: >
+      bash -c "/usr/bin/wait-for.sh -t 0 db:5432 -- /docker-entrypoint.sh"
+    ports:
+      - 80:80
+      - 443:443
+    #Alternatively for non-root images:
+    # - 80:8080
+    # - 443:4433
+
+volumes:
+  database_volume:
+  gpg_volume:
+  jwt_volume:
