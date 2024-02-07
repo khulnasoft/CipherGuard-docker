@@ -186,7 +186,7 @@ $ bin/cake cipherguard healthcheck
 As an alternative to passing sensitive information via environment variables, _FILE may be appended to the previously listed environment variables, causing the initialization script to load the values for those variables from files present in the container. In particular, this can be used to load passwords from Docker secrets stored in /run/secrets/<secret_name> files. For example:
 
 ```
-$ docker run --name passsbolt -e DATASOURCES_DEFAULT_PASSWORD_FILE=/run/secrets/db-password -d khulnasoft/cipherguard
+$ docker run --name cipherguard -e DATASOURCES_DEFAULT_PASSWORD_FILE=/run/secrets/db-password -d khulnasoft/cipherguard
 ```
 
 Currently, this is only supported for DATASOURCES_DEFAULT_PASSWORD, DATASOURCES_DEFAULT_HOST, DATASOURCES_DEFAULT_USERNAME, DATASOURCES_DEFAULT_DATABASE
@@ -194,7 +194,7 @@ Currently, this is only supported for DATASOURCES_DEFAULT_PASSWORD, DATASOURCES_
 Following the behaviour we use to mount docker secrets as environment variables, it is also posible to mount docker secrets as a file inside the cipherguard container. So, for some secret files the user can store them using docker secrets and then inject them into the container with a env variable and the entrypoint script will create a symlink to the proper path.
 
 ```
-$ docker run --name passsbolt -e CIPHERGUARD_SSL_SERVER_CERT_FILE=/run/secrets/ssl-cert -d khulnasoft/cipherguard
+$ docker run --name cipherguard -e CIPHERGUARD_SSL_SERVER_CERT_FILE=/run/secrets/ssl-cert -d khulnasoft/cipherguard
 ```
 
 This feature is only supported for:

@@ -23,7 +23,7 @@
  * 2. set the variables in the App section
  * 3. set the variables in the cipherguard section
  *
- * To see all available options, you can refer to the default.php file, and modify passsbolt.php accordingly.
+ * To see all available options, you can refer to the default.php file, and modify cipherguard.php accordingly.
  * Do not modify default.php or you may break your upgrade process.
  *
  * Read more about how to install cipherguard: https://www.cipherguard.khulnasoft.com/help/tech/install
