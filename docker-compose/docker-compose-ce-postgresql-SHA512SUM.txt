@@ -1,0 +1,1 @@
+dec2bd13cae4c39e0fd71a70ff6dbca47ead18658065989c269d8a642132f6f0cb2f3e538731867380b77fe1dd6e40980d749d604dfdfae8a1ae2580222bce71  docker-compose-ce-postgresql.yaml

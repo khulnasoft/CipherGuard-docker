@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'cipherguar_api service' do
+describe 'cipherguard_api service' do
   before(:all) do
     @mysql_image =
       if ENV['GITLAB_CI']
@@ -14,8 +14,8 @@ describe 'cipherguar_api service' do
     @mysql = Docker::Container.create(
       'Env' => [
         'MARIADB_ROOT_PASSWORD=test',
-        'MARIADB_DATABASE=cipherguar',
-        'MARIADB_USER=cipherguar',
+        'MARIADB_DATABASE=cipherguard',
+        'MARIADB_USER=cipherguard',
         'MARIADB_PASSWORD=±!@#$%^&*()_+=-}{|:;<>?'
       ],
       'Healthcheck' => {
@@ -40,11 +40,11 @@ describe 'cipherguar_api service' do
       @image =
         if ENV['ROOTLESS'] == 'true'
           Docker::Image.create(
-            'fromImage' => "#{ENV['CI_REGISTRY_IMAGE']}:#{ENV['CIPHERGURD_FLAVOUR']}-rootless-latest"
+            'fromImage' => "#{ENV['CI_REGISTRY_IMAGE']}:#{ENV['CIPHERGUARD_FLAVOUR']}-rootless-latest"
           )
         else
           Docker::Image.create(
-            'fromImage' => "#{ENV['CI_REGISTRY_IMAGE']}:#{ENV['CIPHERGURD_FLAVOUR']}-root-latest"
+            'fromImage' => "#{ENV['CI_REGISTRY_IMAGE']}:#{ENV['CIPHERGUARD_FLAVOUR']}-root-latest"
           )
         end
     else
@@ -61,16 +61,16 @@ describe 'cipherguar_api service' do
       'Env' => [
         "DATASOURCES_DEFAULT_HOST=#{@mysql.json['NetworkSettings']['IPAddress']}",
         'DATASOURCES_DEFAULT_PASSWORD=±!@#$%^&*()_+=-}{|:;<>?',
-        'DATASOURCES_DEFAULT_USERNAME=cipherguar',
-        'DATASOURCES_DEFAULT_DATABASE=cipherguar',
-        'CIPHERGURD_SSL_FORCE=true',
-        'CIPHERGURD_GPG_SERVER_KEY_FINGERPRINT_FORCE=true'
+        'DATASOURCES_DEFAULT_USERNAME=cipherguard',
+        'DATASOURCES_DEFAULT_DATABASE=cipherguard',
+        'CIPHERGUARD_SSL_FORCE=true',
+        'CIPHERGUARD_GPG_SERVER_KEY_FINGERPRINT_FORCE=true'
       ],
       'Image' => @image.id,
       'Binds' => $binds.append(
-        "#{FIXTURES_PATH + '/cipherguar-no-fingerprint.php'}:#{CIPHERGURD_CONFIG_PATH + '/cipherguar.php'}",
-        "#{FIXTURES_PATH + '/public-test.key'}:#{CIPHERGURD_CONFIG_PATH + 'gpg/unsecure.key'}",
-        "#{FIXTURES_PATH + '/private-test.key'}:#{CIPHERGURD_CONFIG_PATH + 'gpg/unsecure_private.key'}"
+        "#{FIXTURES_PATH + '/cipherguard-no-fingerprint.php'}:#{CIPHERGUARD_CONFIG_PATH + '/cipherguard.php'}",
+        "#{FIXTURES_PATH + '/public-test.key'}:#{CIPHERGUARD_CONFIG_PATH + 'gpg/unsecure.key'}",
+        "#{FIXTURES_PATH + '/private-test.key'}:#{CIPHERGUARD_CONFIG_PATH + 'gpg/unsecure_private.key'}"
       )
     )
 
@@ -88,7 +88,7 @@ describe 'cipherguar_api service' do
 
   describe 'force fingerprint calculation' do
     it 'is contains fingerprint environment variable' do
-      expect(file('/etc/environment').content).to match(/CIPHERGURD_GPG_SERVER_KEY_FINGERPRINT/)
+      expect(file('/etc/environment').content).to match(/CIPHERGUARD_GPG_SERVER_KEY_FINGERPRINT/)
     end
   end
 end

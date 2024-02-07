@@ -1,10 +1,10 @@
 
 function gpg_gen_key() {
-  key_email="${CIPHERGURD_KEY_EMAIL:-cipherguar@yourdomain.com}"
-  key_name="${CIPHERGURD_KEY_NAME:-Cipherguard default user}"
-  key_length="${CIPHERGURD_KEY_LENGTH:-3072}"
-  subkey_length="${CIPHERGURD_SUBKEY_LENGTH:-3072}"
-  expiration="${CIPHERGURD_KEY_EXPIRATION:-0}"
+  key_email="${CIPHERGUARD_KEY_EMAIL:-cipherguard@yourdomain.com}"
+  key_name="${CIPHERGUARD_KEY_NAME:-Cipherguard default user}"
+  key_length="${CIPHERGUARD_KEY_LENGTH:-3072}"
+  subkey_length="${CIPHERGUARD_SUBKEY_LENGTH:-3072}"
+  expiration="${CIPHERGUARD_KEY_EXPIRATION:-0}"
 
   entropy_check
 
@@ -31,13 +31,13 @@ function gpg_import_key() {
 
 function gen_ssl_cert() {
   openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
-    -subj '/C=FR/ST=Denial/L=Springfield/O=Dis/CN=www.cipherguar.local' \
-    -addext "subjectAltName = DNS:www.cipherguar.local" \
+    -subj '/C=FR/ST=Denial/L=Springfield/O=Dis/CN=www.cipherguard.local' \
+    -addext "subjectAltName = DNS:www.cipherguard.local" \
     -keyout "$ssl_key" -out "$ssl_cert"
 }
 
 function get_subscription_file() {
-  if [ "${CIPHERGURD_FLAVOUR}" == 'ce' ]; then
+  if [ "${CIPHERGUARD_FLAVOUR}" == 'ce' ]; then
     return 1
   fi
   
@@ -56,48 +56,48 @@ function get_subscription_file() {
 function import_subscription() {
   if get_subscription_file; then
     echo "Subscription file found: $SUBSCRIPTION_FILE"
-    su -c "/usr/share/php/cipherguar/bin/cake cipherguar subscription_import --file $SUBSCRIPTION_FILE" -s /bin/bash www-data
+    su -c "/usr/share/php/cipherguard/bin/cake cipherguard subscription_import --file $SUBSCRIPTION_FILE" -s /bin/bash www-data
   fi
 }
 
 function install_command() {
-  echo "Installing cipherguar"
-  su -c '/usr/share/php/cipherguar/bin/cake cipherguar install --no-admin' -s /bin/bash www-data 
+  echo "Installing cipherguard"
+  su -c '/usr/share/php/cipherguard/bin/cake cipherguard install --no-admin' -s /bin/bash www-data 
 }
 
 function clear_cake_cache_engines() {
   echo "Clearing cake caches"
   for engine in "${@}";
   do
-    su -c "/usr/share/php/cipherguar/bin/cake cache clear _cake_${engine}_" -s /bin/bash www-data 
+    su -c "/usr/share/php/cipherguard/bin/cake cache clear _cake_${engine}_" -s /bin/bash www-data 
   done
 }
 
 function migrate_command() {
   echo "Running migrations"
-  su -c '/usr/share/php/cipherguar/bin/cake cipherguar migrate --no-clear-cache' -s /bin/bash www-data 
+  su -c '/usr/share/php/cipherguard/bin/cake cipherguard migrate --no-clear-cache' -s /bin/bash www-data 
   clear_cake_cache_engines model core
 }
 
 function jwt_keys_creation() {
-  if [[ $CIPHERGURD_PLUGINS_JWT_AUTHENTICATION_ENABLED == "true" && ( ! -f $cipherguar_config/jwt/jwt.key || ! -f $cipherguar_config/jwt/jwt.pem ) ]]
+  if [[ $CIPHERGUARD_PLUGINS_JWT_AUTHENTICATION_ENABLED == "true" && ( ! -f $cipherguard_config/jwt/jwt.key || ! -f $cipherguard_config/jwt/jwt.pem ) ]]
   then 
-    su -c '/usr/share/php/cipherguar/bin/cake cipherguar create_jwt_keys' -s /bin/bash www-data
-    chmod 640 "$cipherguar_config/jwt/jwt.key" && chown root:www-data "$cipherguar_config/jwt/jwt.key" 
-    chmod 640 "$cipherguar_config/jwt/jwt.pem" && chown root:www-data "$cipherguar_config/jwt/jwt.pem" 
+    su -c '/usr/share/php/cipherguard/bin/cake cipherguard create_jwt_keys' -s /bin/bash www-data
+    chmod 640 "$cipherguard_config/jwt/jwt.key" && chown root:www-data "$cipherguard_config/jwt/jwt.key" 
+    chmod 640 "$cipherguard_config/jwt/jwt.pem" && chown root:www-data "$cipherguard_config/jwt/jwt.pem" 
   fi 
 }
 
 function install() {
-  if [ ! -f "$cipherguar_config/app.php" ]; then
-    su -c "cp $cipherguar_config/app.default.php $cipherguar_config/app.php" -s /bin/bash www-data
+  if [ ! -f "$cipherguard_config/app.php" ]; then
+    su -c "cp $cipherguard_config/app.default.php $cipherguard_config/app.php" -s /bin/bash www-data
   fi
 
-  if [[ ( "${CIPHERGURD_GPG_SERVER_KEY_FINGERPRINT_FORCE}" == "true" ) || \
-      ( -z "${CIPHERGURD_GPG_SERVER_KEY_FINGERPRINT+xxx}" && \
-      ! -f  "$cipherguar_config/cipherguar.php" ) ]]; then
-    gpg_auto_fingerprint="$(su -c "gpg --homedir $GNUPGHOME --list-keys --with-colons ${CIPHERGURD_KEY_EMAIL:-cipherguar@yourdomain.com} |grep fpr |head -1| cut -f10 -d:" -ls /bin/bash www-data)"
-    export CIPHERGURD_GPG_SERVER_KEY_FINGERPRINT=$gpg_auto_fingerprint
+  if [[ ( "${CIPHERGUARD_GPG_SERVER_KEY_FINGERPRINT_FORCE}" == "true" ) || \
+      ( -z "${CIPHERGUARD_GPG_SERVER_KEY_FINGERPRINT+xxx}" && \
+      ! -f  "$cipherguard_config/cipherguard.php" ) ]]; then
+    gpg_auto_fingerprint="$(su -c "gpg --homedir $GNUPGHOME --list-keys --with-colons ${CIPHERGUARD_KEY_EMAIL:-cipherguard@yourdomain.com} |grep fpr |head -1| cut -f10 -d:" -ls /bin/bash www-data)"
+    export CIPHERGUARD_GPG_SERVER_KEY_FINGERPRINT=$gpg_auto_fingerprint
   fi
 
   import_subscription || true

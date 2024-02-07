@@ -2,13 +2,13 @@
 
 set -euo pipefail
 
-gpg_private_key="${CIPHERGURD_GPG_SERVER_KEY_PRIVATE:-/var/www/cipherguar/config/gpg/serverkey_private.asc}"
-gpg_public_key="${CIPHERGURD_GPG_SERVER_KEY_PUBLIC:-/var/www/cipherguar/config/gpg/serverkey.asc}"
+gpg_private_key="${CIPHERGUARD_GPG_SERVER_KEY_PRIVATE:-/var/www/cipherguard/config/gpg/serverkey_private.asc}"
+gpg_public_key="${CIPHERGUARD_GPG_SERVER_KEY_PUBLIC:-/var/www/cipherguard/config/gpg/serverkey.asc}"
 
 ssl_key='/etc/ssl/certs/certificate.key'
 ssl_cert='/etc/ssl/certs/certificate.crt'
 
-subscription_key_file_paths=("/etc/cipherguar/subscription_key.txt" "/etc/cipherguar/license")
+subscription_key_file_paths=("/etc/cipherguard/subscription_key.txt" "/etc/cipherguard/license")
 
 export GNUPGHOME="/home/www-data/.gnupg"
 
@@ -36,11 +36,11 @@ EOF
 }
 
 gpg_gen_key() {
-  key_email="${CIPHERGURD_KEY_EMAIL:-cipherguar@yourdomain.com}"
-  key_name="${CIPHERGURD_KEY_NAME:-Cipherguard default user}"
-  key_length="${CIPHERGURD_KEY_LENGTH:-3072}"
-  subkey_length="${CIPHERGURD_SUBKEY_LENGTH:-3072}"
-  expiration="${CIPHERGURD_KEY_EXPIRATION:-0}"
+  key_email="${CIPHERGUARD_KEY_EMAIL:-cipherguard@yourdomain.com}"
+  key_name="${CIPHERGUARD_KEY_NAME:-Cipherguard default user}"
+  key_length="${CIPHERGUARD_KEY_LENGTH:-3072}"
+  subkey_length="${CIPHERGUARD_SUBKEY_LENGTH:-3072}"
+  expiration="${CIPHERGUARD_KEY_EXPIRATION:-0}"
 
   entropy_check
 
@@ -67,12 +67,12 @@ gpg_import_key() {
 
 gen_ssl_cert() {
   openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
-    -subj '/C=FR/ST=Denial/L=Springfield/O=Dis/CN=www.cipherguar.local' \
+    -subj '/C=FR/ST=Denial/L=Springfield/O=Dis/CN=www.cipherguard.local' \
     -keyout $ssl_key -out $ssl_cert
 }
 
 get_subscription_file() {
-  if [ "${CIPHERGURD_FLAVOUR}" == 'ce' ]; then
+  if [ "${CIPHERGUARD_FLAVOUR}" == 'ce' ]; then
     return 1
   fi
   
@@ -91,30 +91,30 @@ get_subscription_file() {
 check_subscription() {
   if get_subscription_file; then
     echo "Subscription file found: $SUBSCRIPTION_FILE"
-    su -c "/usr/share/php/cipherguar/bin/cake cipherguar subscription_import --file $SUBSCRIPTION_FILE" -s /bin/bash www-data
+    su -c "/usr/share/php/cipherguard/bin/cake cipherguard subscription_import --file $SUBSCRIPTION_FILE" -s /bin/bash www-data
   fi
 }
 
 install_command() {
-  echo "Installing cipherguar"
-  su -c './bin/cake cipherguar install --no-admin' -s /bin/bash www-data 
+  echo "Installing cipherguard"
+  su -c './bin/cake cipherguard install --no-admin' -s /bin/bash www-data 
 }
 
 migrate_command() {
   echo "Running migrations"
-  su -c './bin/cake cipherguar migrate' -s /bin/bash www-data 
+  su -c './bin/cake cipherguard migrate' -s /bin/bash www-data 
 }
 
 install() {
-  local app_config="/var/www/cipherguar/config/app.php"
+  local app_config="/var/www/cipherguard/config/app.php"
 
   if [ ! -f "$app_config" ]; then
-    su -c 'cp /var/www/cipherguar/config/app.default.php /var/www/cipherguar/config/app.php' -s /bin/bash www-data
+    su -c 'cp /var/www/cipherguard/config/app.default.php /var/www/cipherguard/config/app.php' -s /bin/bash www-data
   fi
 
-  if [ -z "${CIPHERGURD_GPG_SERVER_KEY_FINGERPRINT+xxx}" ] && [ ! -f  '/var/www/cipherguar/config/cipherguar.php' ]; then
-    gpg_auto_fingerprint="$(su -c "gpg --list-keys --with-colons ${CIPHERGURD_KEY_EMAIL:-cipherguar@yourdomain.com} |grep fpr |head -1| cut -f10 -d:" -ls /bin/bash www-data)"
-    export CIPHERGURD_GPG_SERVER_KEY_FINGERPRINT=$gpg_auto_fingerprint
+  if [ -z "${CIPHERGUARD_GPG_SERVER_KEY_FINGERPRINT+xxx}" ] && [ ! -f  '/var/www/cipherguard/config/cipherguard.php' ]; then
+    gpg_auto_fingerprint="$(su -c "gpg --list-keys --with-colons ${CIPHERGUARD_KEY_EMAIL:-cipherguard@yourdomain.com} |grep fpr |head -1| cut -f10 -d:" -ls /bin/bash www-data)"
+    export CIPHERGUARD_GPG_SERVER_KEY_FINGERPRINT=$gpg_auto_fingerprint
   fi
 
   check_subscription || true

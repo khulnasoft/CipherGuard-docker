@@ -6,8 +6,8 @@
     entrypoint: [""]
   variables:
     COMPONENT: "testing"
-    API_IMAGE_SOURCE: "https://github.com/passbolt/passbolt_api"
-    IMAGE_DESCRIPTION: "Passbolt CE Backend, a JSON API written with CakePHP"
+    API_IMAGE_SOURCE: "https://github.com/khulnasoft/cipherguard_api"
+    IMAGE_DESCRIPTION: "Cipherguard CE Backend, a JSON API written with CakePHP"
   script:
     - |
       cat << EOF > /kaniko/.docker/config.json
@@ -27,7 +27,7 @@
       echo "********************************************"
       echo "Build details"
       echo "============================================"
-      echo "Flavour ${PASSBOLT_FLAVOUR:-local}"
+      echo "Flavour ${CIPHERGUARD_FLAVOUR:-local}"
       echo "Commit  ${UPSTREAM_COMMIT_SHA:-latest}"
       echo "********************************************"
     - |
@@ -35,29 +35,29 @@
         --build-arg API_REPOSITORY="${API_IMAGE_SOURCE}" \
         --build-arg BUILD_DATE="$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
         --build-arg IMAGE_DESCRIPTION="${IMAGE_DESCRIPTION}" \
-        --build-arg PASSBOLT_COMPONENT="$COMPONENT" \
-        --build-arg PASSBOLT_FLAVOUR="$PASSBOLT_FLAVOUR" \
+        --build-arg CIPHERGUARD_COMPONENT="$COMPONENT" \
+        --build-arg CIPHERGUARD_FLAVOUR="$CIPHERGUARD_FLAVOUR" \
         --build-arg SUPERCRONIC_ARCH="${SUPERCRONIC_ARCH}" \
         --build-arg SUPERCRONIC_SHA1SUM="${SUPERCRONIC_SHA1SUM}" \
         --dockerfile $CI_PROJECT_DIR/$DOCKERFILE_PATH \
         --custom-platform $PLATFORM \
-        --destination $CI_REGISTRY_IMAGE:${PASSBOLT_FLAVOUR:-local}-${DOCKER_TAG}-$(date +%s) \
-        --destination $CI_REGISTRY_IMAGE:${PASSBOLT_FLAVOUR:-local}-${DOCKER_TAG}-latest
+        --destination $CI_REGISTRY_IMAGE:${CIPHERGUARD_FLAVOUR:-local}-${DOCKER_TAG}-$(date +%s) \
+        --destination $CI_REGISTRY_IMAGE:${CIPHERGUARD_FLAVOUR:-local}-${DOCKER_TAG}-latest
 
 .stable-build:
   extends: .build
   variables:
     COMPONENT: "stable"
-    PASSBOLT_FLAVOUR: "ce"
+    CIPHERGUARD_FLAVOUR: "ce"
     OPPOSITE_FLAVOUR: "pro"
 
 .stable-build-pro:
   extends: .build
   variables:
-    API_IMAGE_SOURCE: "https://bitbucket.org/passbolt_pro/passbolt_pro_api"
+    API_IMAGE_SOURCE: "https://bitbucket.org/cipherguard_pro/cipherguard_pro_api"
     COMPONENT: "stable"
-    IMAGE_DESCRIPTION: "Passbolt PRO Backend, a JSON API written with CakePHP"
-    PASSBOLT_FLAVOUR: "pro"
+    IMAGE_DESCRIPTION: "Cipherguard PRO Backend, a JSON API written with CakePHP"
+    CIPHERGUARD_FLAVOUR: "pro"
     OPPOSITE_FLAVOUR: "ce"
 
 build-ce-stable-docker:

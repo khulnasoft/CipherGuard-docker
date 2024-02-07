@@ -7,12 +7,12 @@
                                                          `-./ .'...--`
   The open source password manager for teams                `'
   (c) 2023 Cipherguard SA
-  https://www.khulnasoft.com
+  https://www.cipherguard.khulnasoft.com
 ```
 
 # Setting up a working development environment using docker
 
-Please note that these instructions are for setting a functional development environment only. Refer to the [installation guide](https://help.khulnasoft.com/hosting/install) if you want to use Cipherguard securely to share passwords with your team.
+Please note that these instructions are for setting a functional development environment only. Refer to the [installation guide](https://help.cipherguard.khulnasoft.com/hosting/install) if you want to use Cipherguard securely to share passwords with your team.
 
 ## Prerequisites
   - [Git](https://git-scm.com/)
@@ -25,7 +25,7 @@ Fork the Cipherguard API repository. Please read [Fork a repo](https://docs.gith
 
 Clone the forked repository onto your local machine:
 ```bash
-git clone git@github.com:<YOUR_FORK_HERE>/cipherguar_api.git
+git clone git@github.com:<YOUR_FORK_HERE>/cipherguard_api.git
 ```
 
 In addition to the Cipherguard API repository, you'll also require the [cipherguard_docker](https://github.com/khulnasoft/cipherguard_docker) repository to spin up the stack using docker compose.
@@ -33,36 +33,36 @@ In addition to the Cipherguard API repository, you'll also require the [ciphergu
 git clone https://github.com/khulnasoft/cipherguard_docker.git
 ```
 
-2. Copy the initial app.php into a new one for cipherguar_api (the new file will be used by the cipherguar server)
+2. Copy the initial app.php into a new one for cipherguard_api (the new file will be used by the cipherguard server)
 ```
-cd cipherguar_api
+cd cipherguard_api
 cp config/app.default.php config/app.php
 ```
 
 3. Run composer install to update all the dependencies. A new vendor directory will be created with all the required libraries
 ```
-cd cipherguar_api
+cd cipherguard_api
 docker run --rm --interactive --tty --volume $PWD:/app composer install --ignore-platform-reqs
 ```
 
-4. Map the cipherguar.local to the localhost in the /etc/hosts
+4. Map the cipherguard.local to the localhost in the /etc/hosts
 ```
-127.0.0.1   cipherguar.local
+127.0.0.1   cipherguard.local
 ```
 
-5. Copy the .env.example file into .env and replace the PATH_TO_CIPHERGURD_API variable with the path to the cipherguar_api repository on your machine
+5. Copy the .env.example file into .env and replace the PATH_TO_CIPHERGUARD_API variable with the path to the cipherguard_api repository on your machine
 
-6. Spin-up the docker-compose containers (mariadb and cipherguar server)
+6. Spin-up the docker-compose containers (mariadb and cipherguard server)
 ```
 cd cipherguard_docker
 docker-compose -f dev/docker-compose-dev.yml up -d
 ```
 
-7. Create the first user (the administrator) by replacing the below command with your own data. More details [here](https://help.khulnasoft.com/hosting/install/ce/docker).
+7. Create the first user (the administrator) by replacing the below command with your own data. More details [here](https://help.cipherguard.khulnasoft.com/hosting/install/ce/docker).
 ```
 cd cipherguard_docker
-docker-compose -f dev/docker-compose-ce.yaml exec cipherguar /bin/bash -c \
-  'su -m -c "/var/www/cipherguar/bin/cake cipherguar register_user -u myuser@cipherguar.local \
+docker-compose -f dev/docker-compose-ce.yaml exec cipherguard /bin/bash -c \
+  'su -m -c "/var/www/cipherguard/bin/cake cipherguard register_user -u myuser@cipherguard.local \
    -f name  -l lastname  -r admin" -s /bin/sh www-data'
 ```
 
@@ -88,7 +88,7 @@ The default env variables are defined in `dev/env/pgsql.env`.
   - Login DN:  `cn=admin,dc=example,dc=org`
   - Password:  `admin`
 4. Click the Import button and upload the [LDAP init file](./ldap/init.ldiff)
-5. Navigate to https://cipherguar.local, login and put the following configuration under Administration > User Directory:
+5. Navigate to https://cipherguard.local, login and put the following configuration under Administration > User Directory:
   - Directory Type:  `Open Ldap`
   - Server url:      `ldap://openldap:389`
   - Username:        `cn=admin,dc=example,dc=org`
@@ -97,7 +97,7 @@ The default env variables are defined in `dev/env/pgsql.env`.
   - Base DN:         `dc=example,dc=org`
 6. Click the button to test the configuration, ensure the dummy data has been processed and click the button to save the settings
 
-**Note:** If you get an "Internal Server Error" while testing the configurations and you are using the php debug mode, set the debug flag to false (e.g. in cipherguar.php) and try again.
+**Note:** If you get an "Internal Server Error" while testing the configurations and you are using the php debug mode, set the debug flag to false (e.g. in cipherguard.php) and try again.
 
 # Setup xDebug
 
@@ -116,7 +116,7 @@ You will then have to configure your IDE to connect to xDebug. Below are the ste
   "request": "launch",
   "port": 9003,
   "pathMappings": {
-    "/var/www/cipherguar": "${workspaceFolder}"
+    "/var/www/cipherguard": "${workspaceFolder}"
   }
 },
 ```
@@ -134,11 +134,11 @@ In case the "${workspaceFolder}" value is not mapped correctly (this seems to be
 1. Configure your IDE so that it can properly connect with Docker: under Settings/Preferences -> Build, Execution, Deployment -> Docker. Here is a tutorial: https://www.jetbrains.com/help/phpstorm/docker.html#enable_docker
 2. Then, under Settings/Preferences -> PHP -> Debug, in the "External connections" section, make sure the "Break at first line in PHP scripts" checkbox is unchecked
 3. Thereafter, we need to configure a PHP server, which can be done by going to File > Settings > PHP > Servers. Click on the plus sign twice to create two servers:
-  - The first server should be set to xDebug: Name="Docker - Cipherguard", Host="cipherguar.local", Port="9003", Debugger="Xdebug", ProjectFiles="<PATH_TO_CIPHERGURD_API_REPO>", AbsolutePath="/var/www/cipherguar"
-  - The second server should be set to the web server (cipherguar.local): Name="cipherguar.local", Host="cipherguar.local", Port="443", Debugger="Xdebug", ProjectFiles="<PATH_TO_CIPHERGURD_API_REPO>", AbsolutePath="/var/www/cipherguar"
+  - The first server should be set to xDebug: Name="Docker - Cipherguard", Host="cipherguard.local", Port="9003", Debugger="Xdebug", ProjectFiles="<PATH_TO_CIPHERGUARD_API_REPO>", AbsolutePath="/var/www/cipherguard"
+  - The second server should be set to the web server (cipherguard.local): Name="cipherguard.local", Host="cipherguard.local", Port="443", Debugger="Xdebug", ProjectFiles="<PATH_TO_CIPHERGUARD_API_REPO>", AbsolutePath="/var/www/cipherguard"
 4. Save and close the Settings/Preferences window
 5. At the top of the main window, click the "Add Configuration..." button, then "Add new..." > "PHP Remote Debug"
-6. Check the "Filter debug connection by IDE key", and fill in the form with: Name="Docker - Cipherguard", Server="Docker - Cipherguard", IDEKey="docker_cipherguar"
+6. Check the "Filter debug connection by IDE key", and fill in the form with: Name="Docker - Cipherguard", Server="Docker - Cipherguard", IDEKey="docker_cipherguard"
 7. At the top of the main window, click the "Listen for PHP debug connection" button and start a debugging session
 
-**Note:** If you want to debug tests, you will need to properly setup the PHPUnit library under Settings/Preferences -> PHP -> Test Frameworks by adding a configuration and setting the path to phpunit.phar to "/var/www/cipherguar/vendor/bin/phpunit" (the docker path mapping must be setup for it to work with this path)
+**Note:** If you want to debug tests, you will need to properly setup the PHPUnit library under Settings/Preferences -> PHP -> Test Frameworks by adding a configuration and setting the path to phpunit.phar to "/var/www/cipherguard/vendor/bin/phpunit" (the docker path mapping must be setup for it to work with this path)

@@ -5,13 +5,13 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: "true"
-      MYSQL_DATABASE: "cipherguar"
-      MYSQL_USER: "cipherguar"
+      MYSQL_DATABASE: "cipherguard"
+      MYSQL_USER: "cipherguard"
       MYSQL_PASSWORD: "P4ssb0lt"
     volumes:
       - database_volume:/var/lib/mysql
 
-  cipherguar:
+  cipherguard:
     image: khulnasoft/cipherguard:latest-ce
     #Alternatively you can use rootless:
     #image: khulnasoft/cipherguard:latest-ce-non-root
@@ -19,14 +19,14 @@ services:
     depends_on:
       - db
     environment:
-      APP_FULL_BASE_URL: https://cipherguar.local
+      APP_FULL_BASE_URL: https://cipherguard.local
       DATASOURCES_DEFAULT_HOST: "db"
-      DATASOURCES_DEFAULT_USERNAME: "cipherguar"
+      DATASOURCES_DEFAULT_USERNAME: "cipherguard"
       DATASOURCES_DEFAULT_PASSWORD: "P4ssb0lt"
-      DATASOURCES_DEFAULT_DATABASE: "cipherguar"
+      DATASOURCES_DEFAULT_DATABASE: "cipherguard"
     volumes:
-      - gpg_volume:/etc/cipherguar/gpg
-      - jwt_volume:/etc/cipherguar/jwt
+      - gpg_volume:/etc/cipherguard/gpg
+      - jwt_volume:/etc/cipherguard/jwt
     command:
       [
         "/usr/bin/wait-for.sh",

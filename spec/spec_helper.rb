@@ -6,8 +6,8 @@ require 'docker'
 ROOT_DOCKERFILES = File.expand_path('..', __dir__)
 FIXTURES_PATH = File.expand_path('fixtures', File.dirname(__FILE__))
 LOCAL_SUBSCRIPTION_KEY_PATH = File.expand_path('../subscription_key.txt', __dir__)
-SUBSCRIPTION_KEY_PATH = '/etc/cipherguar/subscription_key.txt'
-CIPHERGURD_CONFIG_PATH = '/etc/cipherguar'
+SUBSCRIPTION_KEY_PATH = '/etc/cipherguard/subscription_key.txt'
+CIPHERGUARD_CONFIG_PATH = '/etc/cipherguard'
 
 $cron_binary = '/usr/sbin/cron'
 $dockerfile = 'debian/Dockerfile'
@@ -18,11 +18,11 @@ $config_group = 'www-data'
 $binds = []
 
 $buildargs = {
-  CIPHERGURD_FLAVOUR: ENV['CIPHERGURD_FLAVOUR'].to_s,
-  CIPHERGURD_COMPONENT: ENV['CIPHERGURD_COMPONENT'].to_s
+  CIPHERGUARD_FLAVOUR: ENV['CIPHERGUARD_FLAVOUR'].to_s,
+  CIPHERGUARD_COMPONENT: ENV['CIPHERGUARD_COMPONENT'].to_s
 }
 
-$binds = ["#{LOCAL_SUBSCRIPTION_KEY_PATH}:#{SUBSCRIPTION_KEY_PATH}"] if ENV['CIPHERGURD_FLAVOUR'] == 'pro'
+$binds = ["#{LOCAL_SUBSCRIPTION_KEY_PATH}:#{SUBSCRIPTION_KEY_PATH}"] if ENV['CIPHERGUARD_FLAVOUR'] == 'pro'
 
 set :backend, :docker
 Docker.options[:read_timeout]  = 3600

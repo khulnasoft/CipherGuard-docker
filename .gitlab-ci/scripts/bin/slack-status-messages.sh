@@ -31,7 +31,7 @@ curl -X POST -H 'Content-type: application/json' $SLACK_WEBHOOK \
           "text": "DockerHub",
           "type": "button",
           "style": "primary",
-          "url": "https://hub.docker.com/r/passbolt/passbolt/tags"
+          "url": "https://hub.docker.com/r/khulnasoft/cipherguard/tags"
         }
       ]
     }

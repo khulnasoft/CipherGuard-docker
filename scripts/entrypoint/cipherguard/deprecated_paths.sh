@@ -4,16 +4,16 @@ function create_deprecation_message() {
 
 function check_deprecated_paths() {
   declare -A deprecated_paths
-  local deprecated_avatar_path="/var/www/cipherguar/webroot/img/public/Avatar"
-  local avatar_path="/usr/share/php/cipherguar/webroot/img/public/Avatar"
-  local deprecated_subscription_path="/var/www/cipherguar/webroot/img/public/Avatar"
-  local subscription_path="/etc/cipherguar/license"
+  local deprecated_avatar_path="/var/www/cipherguard/webroot/img/public/Avatar"
+  local avatar_path="/usr/share/php/cipherguard/webroot/img/public/Avatar"
+  local deprecated_subscription_path="/var/www/cipherguard/webroot/img/public/Avatar"
+  local subscription_path="/etc/cipherguard/license"
   deprecated_paths=(
-    ['/var/www/cipherguar/config/gpg/serverkey.asc']='/etc/cipherguar/gpg/serverkey.asc'
-    ['/var/www/cipherguar/config/gpg/serverkey_private.asc']='/etc/cipherguar/gpg/serverkey_private.asc'
+    ['/var/www/cipherguard/config/gpg/serverkey.asc']='/etc/cipherguard/gpg/serverkey.asc'
+    ['/var/www/cipherguard/config/gpg/serverkey_private.asc']='/etc/cipherguard/gpg/serverkey_private.asc'
   )
 
-  if [ -z "$CIPHERGURD_GPG_SERVER_KEY_PUBLIC" ] || [ -z "$CIPHERGURD_GPG_SERVER_KEY_PRIVATE" ]; then
+  if [ -z "$CIPHERGUARD_GPG_SERVER_KEY_PUBLIC" ] || [ -z "$CIPHERGUARD_GPG_SERVER_KEY_PRIVATE" ]; then
     for path in "${!deprecated_paths[@]}"
     do
       if [ -f "$path" ] && [ ! -f "${deprecated_paths[$path]}" ]; then

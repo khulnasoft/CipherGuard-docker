@@ -2,21 +2,21 @@
 
 set -eo pipefail
 
-cipherguar_config="/etc/cipherguar"
-gpg_private_key="${CIPHERGURD_GPG_SERVER_KEY_PRIVATE:-$cipherguar_config/gpg/serverkey_private.asc}"
-gpg_public_key="${CIPHERGURD_GPG_SERVER_KEY_PUBLIC:-$cipherguar_config/gpg/serverkey.asc}"
+cipherguard_config="/etc/cipherguard"
+gpg_private_key="${CIPHERGUARD_GPG_SERVER_KEY_PRIVATE:-$cipherguard_config/gpg/serverkey_private.asc}"
+gpg_public_key="${CIPHERGUARD_GPG_SERVER_KEY_PUBLIC:-$cipherguard_config/gpg/serverkey.asc}"
 
-ssl_key='/etc/cipherguar/certs/certificate.key'
-ssl_cert='/etc/cipherguar/certs/certificate.crt'
+ssl_key='/etc/cipherguard/certs/certificate.key'
+ssl_cert='/etc/cipherguard/certs/certificate.crt'
 
 deprecation_message=""
 
-subscription_key_file_paths=("/etc/cipherguar/subscription_key.txt" "/etc/cipherguar/license")
+subscription_key_file_paths=("/etc/cipherguard/subscription_key.txt" "/etc/cipherguard/license")
 
-source $(dirname $0)/../cipherguar/entrypoint-rootless.sh
-source $(dirname $0)/../cipherguar/entropy.sh
-source $(dirname $0)/../cipherguar/env.sh
-source $(dirname $0)/../cipherguar/deprecated_paths.sh
+source $(dirname $0)/../cipherguard/entrypoint-rootless.sh
+source $(dirname $0)/../cipherguard/entropy.sh
+source $(dirname $0)/../cipherguard/env.sh
+source $(dirname $0)/../cipherguard/deprecated_paths.sh
 
 manage_docker_env
 

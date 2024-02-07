@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'cipherguar_api service' do
+describe 'cipherguard_api service' do
   before(:all) do
     @mysql_image =
       if ENV['GITLAB_CI']
@@ -14,8 +14,8 @@ describe 'cipherguar_api service' do
     @mysql = Docker::Container.create(
       'Env' => [
         'MARIADB_ROOT_PASSWORD=test',
-        'MARIADB_DATABASE=cipherguar',
-        'MARIADB_USER=cipherguar',
+        'MARIADB_DATABASE=cipherguard',
+        'MARIADB_USER=cipherguard',
         'MARIADB_PASSWORD=±!@#$%^&*()_+=-}{|:;<>?'
       ],
       'Healthcheck' => {
@@ -40,11 +40,11 @@ describe 'cipherguar_api service' do
       @image =
         if ENV['ROOTLESS'] == 'true'
           Docker::Image.create(
-            'fromImage' => "#{ENV['CI_REGISTRY_IMAGE']}:#{ENV['CIPHERGURD_FLAVOUR']}-rootless-latest"
+            'fromImage' => "#{ENV['CI_REGISTRY_IMAGE']}:#{ENV['CIPHERGUARD_FLAVOUR']}-rootless-latest"
           )
         else
           Docker::Image.create(
-            'fromImage' => "#{ENV['CI_REGISTRY_IMAGE']}:#{ENV['CIPHERGURD_FLAVOUR']}-root-latest"
+            'fromImage' => "#{ENV['CI_REGISTRY_IMAGE']}:#{ENV['CIPHERGUARD_FLAVOUR']}-root-latest"
           )
         end
     else
@@ -61,9 +61,9 @@ describe 'cipherguar_api service' do
       'Env' => [
         "DATASOURCES_DEFAULT_HOST=#{@mysql.json['NetworkSettings']['IPAddress']}",
         'DATASOURCES_DEFAULT_PASSWORD=±!@#$%^&*()_+=-}{|:;<>?',
-        'DATASOURCES_DEFAULT_USERNAME=cipherguar',
-        'DATASOURCES_DEFAULT_DATABASE=cipherguar',
-        'CIPHERGURD_SSL_FORCE=true'
+        'DATASOURCES_DEFAULT_USERNAME=cipherguard',
+        'DATASOURCES_DEFAULT_DATABASE=cipherguard',
+        'CIPHERGUARD_SSL_FORCE=true'
       ],
       'Image' => @image.id,
       'Binds' => $binds
@@ -81,25 +81,25 @@ describe 'cipherguar_api service' do
     @container.kill
   end
 
-  let(:cipherguar_host)     { @container.json['NetworkSettings']['IPAddress'] }
+  let(:cipherguard_host)     { @container.json['NetworkSettings']['IPAddress'] }
   let(:uri)               { '/healthcheck/status.json' }
-  let(:curl)              { "curl -sk -o /dev/null -w '%{http_code}' -H 'Host: cipherguar.local' https://#{cipherguar_host}:#{$https_port}/#{uri}" }
+  let(:curl)              { "curl -sk -o /dev/null -w '%{http_code}' -H 'Host: cipherguard.local' https://#{cipherguard_host}:#{$https_port}/#{uri}" }
 
   let(:rootless_env_setup) do
     # The sed command needs to create a temporary file on the same directory as the destination file (/etc/cron.d).
     # So when running this tests on the rootless image we have to move the crontab file to tmp, execute the sed on it
     # and copy it back to /etc/cron.d.
-    @container.exec(['cp', "/etc/cron.d/cipherguar-#{ENV['CIPHERGURD_FLAVOUR']}-server", '/tmp/cipherguar-cron'])
-    @container.exec(['cp', "/etc/cron.d/cipherguar-#{ENV['CIPHERGURD_FLAVOUR']}-server", '/tmp/cipherguar-cron-temporary'])
+    @container.exec(['cp', "/etc/cron.d/cipherguard-#{ENV['CIPHERGUARD_FLAVOUR']}-server", '/tmp/cipherguard-cron'])
+    @container.exec(['cp', "/etc/cron.d/cipherguard-#{ENV['CIPHERGUARD_FLAVOUR']}-server", '/tmp/cipherguard-cron-temporary'])
     @container.exec(
       [
         'sed',
         '-i',
-        "s\,$CIPHERGURD_BASE_DIR/bin/cron.*\,/bin/bash -c \"\\.\\ /etc/environment\\ \\&\\&\\ env > /tmp/cron-test\"\,",
-        '/tmp/cipherguar-cron-temporary'
+        "s\,$CIPHERGUARD_BASE_DIR/bin/cron.*\,/bin/bash -c \"\\.\\ /etc/environment\\ \\&\\&\\ env > /tmp/cron-test\"\,",
+        '/tmp/cipherguard-cron-temporary'
       ]
     )
-    @container.exec(['cp', '/tmp/cipherguar-cron-temporary', "/etc/cron.d/cipherguar-#{ENV['CIPHERGURD_FLAVOUR']}-server"])
+    @container.exec(['cp', '/tmp/cipherguard-cron-temporary', "/etc/cron.d/cipherguard-#{ENV['CIPHERGUARD_FLAVOUR']}-server"])
     # force reload supercronic cron file
     @container.exec(%w[supervisorctl restart cron])
 
@@ -108,24 +108,24 @@ describe 'cipherguar_api service' do
   end
 
   let(:cron_env_teardown) do
-    @container.exec(['mv', '/tmp/cipherguar-cron', "/etc/cron.d/cipherguar-#{ENV['CIPHERGURD_FLAVOUR']}-server"])
-    @container.exec(['rm', '/tmp/cipherguar-cron-temporary'])
+    @container.exec(['mv', '/tmp/cipherguard-cron', "/etc/cron.d/cipherguard-#{ENV['CIPHERGUARD_FLAVOUR']}-server"])
+    @container.exec(['rm', '/tmp/cipherguard-cron-temporary'])
   end
 
   let(:root_env_setup) do
-    @container.exec(['cp', "/etc/cron.d/cipherguar-#{ENV['CIPHERGURD_FLAVOUR']}-server", '/tmp/cipherguar-cron'])
+    @container.exec(['cp', "/etc/cron.d/cipherguard-#{ENV['CIPHERGUARD_FLAVOUR']}-server", '/tmp/cipherguard-cron'])
     @container.exec(
       [
         'sed',
         '-i',
-        "s\,\\.\\ /etc/environment\\ \\&\\&\\ $CIPHERGURD_BASE_DIR/bin/cron\,\\.\\ /etc/environment\\ \\&\\&\\ env > /tmp/cron-test\,",
-        "/etc/cron.d/cipherguar-#{ENV['CIPHERGURD_FLAVOUR']}-server"
+        "s\,\\.\\ /etc/environment\\ \\&\\&\\ $CIPHERGUARD_BASE_DIR/bin/cron\,\\.\\ /etc/environment\\ \\&\\&\\ env > /tmp/cron-test\,",
+        "/etc/cron.d/cipherguard-#{ENV['CIPHERGUARD_FLAVOUR']}-server"
       ]
     )
     @container.exec(
       [
         'cp',
-        '/tmp/cipherguar-cron-temporary', "/etc/cron.d/cipherguar-#{ENV['CIPHERGURD_FLAVOUR']}-server"
+        '/tmp/cipherguard-cron-temporary', "/etc/cron.d/cipherguard-#{ENV['CIPHERGUARD_FLAVOUR']}-server"
       ]
     )
 
@@ -153,7 +153,7 @@ describe 'cipherguar_api service' do
     end
   end
 
-  describe 'cipherguar status' do
+  describe 'cipherguard status' do
     it 'returns 200' do
       expect(command(curl).stdout).to eq '200'
     end
@@ -167,7 +167,7 @@ describe 'cipherguar_api service' do
   end
 
   describe 'hide information' do
-    let(:curl) { "curl -Isk -H 'Host: cipherguar.local' https://#{cipherguar_host}:#{$https_port}/" }
+    let(:curl) { "curl -Isk -H 'Host: cipherguard.local' https://#{cipherguard_host}:#{$https_port}/" }
     it 'hides php version' do
       expect(command("#{curl} | grep 'X-Powered-By: PHP'").stdout).to be_empty
     end
@@ -186,8 +186,8 @@ describe 'cipherguar_api service' do
 
     # In order to be able to run this test on the rootess image
     # you will have to add the following to the Dockerfile (debian/Dockerfile.rootless)
-    # && chown root:www-data /etc/cron.d/$CIPHERGURD_PKG \
-    # && chmod 664 /etc/cron.d/$CIPHERGURD_PKG
+    # && chown root:www-data /etc/cron.d/$CIPHERGUARD_PKG \
+    # && chmod 664 /etc/cron.d/$CIPHERGUARD_PKG
     # And change the xit to it keyword on the test
 
     context 'cron rootless environment' do
@@ -196,7 +196,7 @@ describe 'cipherguar_api service' do
       after(:each) { cron_env_teardown }
 
       it 'is contains the correct env' do
-        expect(file('/tmp/cron-test').content).to match(/CIPHERGURD_GPG_SERVER_KEY_FINGERPRINT/)
+        expect(file('/tmp/cron-test').content).to match(/CIPHERGUARD_GPG_SERVER_KEY_FINGERPRINT/)
       end
     end
 
@@ -206,7 +206,7 @@ describe 'cipherguar_api service' do
       after(:each) { cron_env_teardown }
 
       it 'is contains the correct env' do
-        expect(file('/tmp/cron-test').content).to match(/CIPHERGURD_GPG_SERVER_KEY_FINGERPRINT/)
+        expect(file('/tmp/cron-test').content).to match(/CIPHERGUARD_GPG_SERVER_KEY_FINGERPRINT/)
       end
     end
   end

@@ -12,11 +12,11 @@ services:
     ports:
       - "3306:3306"
 
-  cipherguar:
+  cipherguard:
     build:
       context: ..
       dockerfile: dev/Dockerfile
-    container_name: cipherguar
+    container_name: cipherguard
     depends_on:
       - db
       - pgsql
@@ -24,11 +24,11 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file:
-      - env/cipherguar.env
+      - env/cipherguard.env
     volumes:
-      - ${CIPHERGURD_API_PATH}:/var/www/cipherguar
-      - gpg_volume:/var/www/cipherguar/config/gpg
-      - images_volume:/var/www/cipherguar/webroot/img/public/images
+      - ${CIPHERGUARD_API_PATH}:/var/www/cipherguard
+      - gpg_volume:/var/www/cipherguard/config/gpg
+      - images_volume:/var/www/cipherguard/webroot/img/public/images
     command: ["/usr/bin/wait-for.sh", "db:3306", "--", "/docker-entrypoint.sh"]
     ports:
       - 80:80

@@ -2,23 +2,23 @@ FROM composer:2.4 AS composer
 
 FROM php:8.1-fpm
 
-ARG API_REPOSITORY="https://github.com/khulnasoft/cipherguar_api"
+ARG API_REPOSITORY="https://github.com/khulnasoft/cipherguard_api"
 ARG IMAGE_DESCRIPTION="Cipherguard CE Backend, a JSON API written with CakePHP"
 ARG BUILD_DATE=""
 
 LABEL org.opencontainers.image.created="${BUILD_DATE}"
 LABEL org.opencontainers.image.description="${IMAGE_DESCRIPTION}"
-LABEL org.opencontainers.image.documentation=https://help.khulnasoft.com/
-LABEL org.opencontainers.image.authors="Khulnasoft SA <contact@khulnasoft.com>"
+LABEL org.opencontainers.image.documentation=https://help.cipherguard.khulnasoft.com/
+LABEL org.opencontainers.image.authors="Cipherguard SA <contact@cipherguard.khulnasoft.com>"
 LABEL org.opencontainers.image.licenses=AGPL-3.0-only
 LABEL org.opencontainers.image.source="${API_REPOSITORY}"
 LABEL org.opencontainers.image.title=khulnasoft/cipherguard
 LABEL org.opencontainers.image.url=https://github.com/khulnasoft/cipherguard_docker
 
-ARG CIPHERGURD_VERSION="3.8.3"
-ARG CIPHERGURD_URL="https://github.com/khulnasoft/cipherguar_api/archive/v${CIPHERGURD_VERSION}.tar.gz"
-ARG CIPHERGURD_CURL_HEADERS=""
-ARG CIPHERGURD_FLAVOUR="ce"
+ARG CIPHERGUARD_VERSION="3.8.3"
+ARG CIPHERGUARD_URL="https://github.com/khulnasoft/cipherguard_api/archive/v${CIPHERGUARD_VERSION}.tar.gz"
+ARG CIPHERGUARD_CURL_HEADERS=""
+ARG CIPHERGUARD_FLAVOUR="ce"
 
 ARG PHP_EXTENSIONS="gd \
       zip \
@@ -31,11 +31,11 @@ ARG PHP_EXTENSIONS="gd \
       ldap\
       xdebug"
 
-ARG PECL_CIPHERGURD_EXTENSIONS="gnupg \
+ARG PECL_CIPHERGUARD_EXTENSIONS="gnupg \
       redis \
       xdebug"
 
-ARG CIPHERGURD_DEV_PACKAGES="libgpgme11-dev \
+ARG CIPHERGUARD_DEV_PACKAGES="libgpgme11-dev \
       libpng-dev \
       libpq-dev \
       libjpeg62-turbo-dev \
@@ -48,7 +48,7 @@ ARG CIPHERGURD_DEV_PACKAGES="libgpgme11-dev \
       unzip \
       zip"
 
-ARG CIPHERGURD_BASE_PACKAGES="nginx \
+ARG CIPHERGUARD_BASE_PACKAGES="nginx \
       git \
       gnupg \
       libgpgme11 \
@@ -59,48 +59,48 @@ ARG CIPHERGURD_BASE_PACKAGES="nginx \
 
 ENV PECL_BASE_URL="https://pecl.php.net/get"
 ENV PHP_EXT_DIR="/usr/src/php/ext"
-ENV CIPHERGURD_FLAVOUR=$CIPHERGURD_FLAVOUR
+ENV CIPHERGUARD_FLAVOUR=$CIPHERGUARD_FLAVOUR
 
-WORKDIR /var/www/cipherguar
+WORKDIR /var/www/cipherguard
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 RUN apt-get update \
     && apt-get -y install --no-install-recommends \
-      $CIPHERGURD_DEV_PACKAGES \
-      $CIPHERGURD_BASE_PACKAGES \
+      $CIPHERGUARD_DEV_PACKAGES \
+      $CIPHERGUARD_BASE_PACKAGES \
     && mkdir /home/www-data \
     && chown -R www-data:www-data /home/www-data \
     && usermod -d /home/www-data www-data \
     && docker-php-source extract \
-    && for i in $PECL_CIPHERGURD_EXTENSIONS; do \
+    && for i in $PECL_CIPHERGUARD_EXTENSIONS; do \
          mkdir $PHP_EXT_DIR/$i; \
          curl -sSL $PECL_BASE_URL/$i | tar zxf - -C $PHP_EXT_DIR/$i --strip-components 1; \
        done \
     && docker-php-ext-configure gd --with-jpeg=/usr/include/ \
-    && docker-php-ext-install -j4 $PHP_EXTENSIONS $PECL_CIPHERGURD_EXTENSIONS \
-    && docker-php-ext-enable $PHP_EXTENSIONS $PECL_CIPHERGURD_EXTENSIONS \
+    && docker-php-ext-install -j4 $PHP_EXTENSIONS $PECL_CIPHERGUARD_EXTENSIONS \
+    && docker-php-ext-enable $PHP_EXTENSIONS $PECL_CIPHERGUARD_EXTENSIONS \
     && docker-php-source delete \
-    && curl -sSL -H "$CIPHERGURD_CURL_HEADERS" "$CIPHERGURD_URL" | tar zxf - -C . --strip-components 1 \
+    && curl -sSL -H "$CIPHERGUARD_CURL_HEADERS" "$CIPHERGUARD_URL" | tar zxf - -C . --strip-components 1 \
     && composer install --no-ansi --no-interaction \
     && chown -R www-data:www-data . \
-    && chmod 775 $(find /var/www/cipherguar/tmp -type d) \
-    && chmod 664 $(find /var/www/cipherguar/tmp -type f) \
-    && chmod 775 $(find /var/www/cipherguar/webroot/img/public -type d) \
-    && chmod 664 $(find /var/www/cipherguar/webroot/img/public -type f) \
+    && chmod 775 $(find /var/www/cipherguard/tmp -type d) \
+    && chmod 664 $(find /var/www/cipherguard/tmp -type f) \
+    && chmod 775 $(find /var/www/cipherguard/webroot/img/public -type d) \
+    && chmod 664 $(find /var/www/cipherguard/webroot/img/public -type f) \
     && rm /etc/nginx/sites-enabled/default \
     && rm -rf /var/lib/apt/lists/* \
     && echo 'php_flag[expose_php] = off' > /usr/local/etc/php-fpm.d/expose.conf \
     && sed -i 's/# server_tokens/server_tokens/' /etc/nginx/nginx.conf \
     && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini" \
-    && echo "* * * * * su -c \"source /etc/environment ; /var/www/cipherguar/bin/cron\" -s /bin/bash www-data >> /var/log/cron.log 2>&1" >> /etc/cron.d/cipherguar_email \
-    && crontab /etc/cron.d/cipherguar_email \
+    && echo "* * * * * su -c \"source /etc/environment ; /var/www/cipherguard/bin/cron\" -s /bin/bash www-data >> /var/log/cron.log 2>&1" >> /etc/cron.d/cipherguard_email \
+    && crontab /etc/cron.d/cipherguard_email \
     && ln -s $(which php-fpm) $(which php-fpm)7.3 \
     && touch /var/log/xdebug.log \
     && chown www-data:www-data /var/log/xdebug.log \
     && chmod 664 /var/log/xdebug.log
 
-COPY conf/cipherguar.conf /etc/nginx/conf.d/default.conf
+COPY conf/cipherguard.conf /etc/nginx/conf.d/default.conf
 COPY conf/supervisor/*.conf /etc/supervisor/conf.d/
 COPY conf/supervisor/php-dev.conf /etc/supervisor/conf.d/php.conf
 COPY conf/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini

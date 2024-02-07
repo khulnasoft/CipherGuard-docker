@@ -1,49 +1,49 @@
 <?php
 /**
  * Cipherguard ~ Open source password manager for teams
- * Copyright (c) Khulnasoft Ltd (https://www.khulnasoft.com)
+ * Copyright (c) Cipherguard SARL (https://www.cipherguard.khulnasoft.com)
  *
  * Licensed under GNU Affero General Public License version 3 of the or any later version.
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Khulnasoft Ltd (https://www.khulnasoft.com)
+ * @copyright     Copyright (c) Cipherguard SARL (https://www.cipherguard.khulnasoft.com)
  * @license       https://opensource.org/licenses/AGPL-3.0 AGPL License
- * @link          https://www.khulnasoft.com Cipherguard(tm)
+ * @link          https://www.cipherguard.khulnasoft.com Cipherguard(tm)
  * @since         2.0.0
  */
 /**
- * CIPHERGURD CONFIGURATION FILE TEMPLATE
+ * CIPHERGUARD CONFIGURATION FILE TEMPLATE
  *
- * By default cipherguar try to use the environment variables or fallback on the default values as
- * defined in default.php. You can use cipherguar.default.php as a basis to set your own configuration
+ * By default cipherguard try to use the environment variables or fallback on the default values as
+ * defined in default.php. You can use cipherguard.default.php as a basis to set your own configuration
  * without using environment variables.
  *
- * 1. copy/paste cipherguar.default.php to cipherguar.php
+ * 1. copy/paste cipherguard.default.php to cipherguard.php
  * 2. set the variables in the App section
- * 3. set the variables in the cipherguar section
+ * 3. set the variables in the cipherguard section
  *
  * To see all available options, you can refer to the default.php file, and modify passsbolt.php accordingly.
  * Do not modify default.php or you may break your upgrade process.
  *
- * Read more about how to install cipherguar: https://www.khulnasoft.com/help/tech/install
- * Any issue, check out our FAQ: https://www.khulnasoft.com/faq
- * An installation issue? Ask for help to the community: https://community.khulnasoft.com/
+ * Read more about how to install cipherguard: https://www.cipherguard.khulnasoft.com/help/tech/install
+ * Any issue, check out our FAQ: https://www.cipherguard.khulnasoft.com/faq
+ * An installation issue? Ask for help to the community: https://community.cipherguard.khulnasoft.com/
  */
 return [
 
     /**
      * DEFAULT APP CONFIGURATION
      *
-     * All the information in this section must be provided in order for cipherguar to work
+     * All the information in this section must be provided in order for cipherguard to work
      * This configuration overrides the CakePHP defaults locating in app.php
      * Do not edit app.php as it may break your upgrade process
      */
     'App' => [
         // A base URL to use for absolute links.
-        // The url where the cipherguar instance will be reachable to your end users.
+        // The url where the cipherguard instance will be reachable to your end users.
         // This information is need to render images in emails for example
-        'fullBaseUrl' => 'https://cipherguar.local',
+        'fullBaseUrl' => 'https://cipherguard.local',
     ],
 
     // Database configuration.
@@ -51,9 +51,9 @@ return [
         'default' => [
             //'host' => 'db',
             //'port' => 'non_standard_port_number',
-            'username' => 'cipherguar',
+            'username' => 'cipherguard',
             'password' => '±!@#$%^&*()_+=-}{|:;<>?',
-            'database' => 'cipherguar',
+            'database' => 'cipherguard',
         ],
     ],
 
@@ -74,21 +74,21 @@ return [
     'Email' => [
         'default' => [
             // Defines the default name and email of the sender of the emails.
-            'from' => ['cipherguar@your_organization.com' => 'Cipherguard'],
+            'from' => ['cipherguard@your_organization.com' => 'Cipherguard'],
             //'charset' => 'utf-8',
             //'headerCharset' => 'utf-8',
         ],
     ],
 
     /**
-     * DEFAULT CIPHERGURD CONFIGURATION
+     * DEFAULT CIPHERGUARD CONFIGURATION
      *
      * This is the default configuration.
      * It enforces the use of ssl, and does not provide a default OpenPGP key.
-     * If your objective is to try cipherguar quickly for evaluation purpose, and security is not important
+     * If your objective is to try cipherguard quickly for evaluation purpose, and security is not important
      * you can use the demo config example provided in the next section below.
      */
-    'cipherguar' => [
+    'cipherguard' => [
         // GPG Configuration.
         // The keyring must to be owned and accessible by the webserver user.
         // Example: www-data user on Debian
@@ -100,7 +100,7 @@ return [
             // - Apache on Debian it would be in '/var/www/.gnupg'
             // - Nginx on Centos it would be in '/var/lib/nginx/.gnupg'
             // - etc.
-            'keyring' => '/var/lib/cipherguar/.gnupg',
+            'keyring' => '/var/lib/cipherguard/.gnupg',
             //
             // Replace GNUPGHOME with above value even if it is set.
             //'putenv' => false,
@@ -118,12 +118,12 @@ return [
 /**
  * DEMO CONFIGURATION EXAMPLE
  *
- * Uncomment the lines below if you want to try cipherguar quickly.
+ * Uncomment the lines below if you want to try cipherguard quickly.
  * and if you are not concerned about the security of your installation.
  * (Don't forget to comment the default config above).
  */
 //    'debug' => true,
-//    'cipherguar' => [
+//    'cipherguard' => [
 //        'registration' => [
 //            'public' => true
 //        ],

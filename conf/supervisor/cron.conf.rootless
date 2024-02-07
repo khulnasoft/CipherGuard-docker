@@ -1,5 +1,5 @@
 [program:cron]
-command=/usr/local/bin/supercronic /etc/cron.d/__CIPHERGURD_PACKAGE__
+command=/usr/local/bin/supercronic /etc/cron.d/__CIPHERGUARD_PACKAGE__
 autostart=true
 priority=20
 stdout_logfile=/dev/stdout

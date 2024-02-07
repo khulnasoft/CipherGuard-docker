@@ -6,9 +6,9 @@ describe 'Dockerfile' do
     set :env, {
       'DATASOURCES_DEFAULT_HOST' => '172.17.0.2',
       'DATASOURCES_DEFAULT_PASSWORD' => 'P4ssb0lt',
-      'DATASOURCES_DEFAULT_USERNAME' => 'cipherguar',
-      'DATASOURCES_DEFAULT_DATABASE' => 'cipherguar',
-      'CIPHERGURD_GPG_KEYRING' => '/var/lib/cipherguar/.gnupg'
+      'DATASOURCES_DEFAULT_USERNAME' => 'cipherguard',
+      'DATASOURCES_DEFAULT_DATABASE' => 'cipherguard',
+      'CIPHERGUARD_GPG_KEYRING' => '/var/lib/cipherguard/.gnupg'
     }
 
     if ENV['GITLAB_CI']
@@ -18,9 +18,9 @@ describe 'Dockerfile' do
         'serveraddress' => 'https://registry.gitlab.com/'
       )
       @image = if ENV['ROOTLESS'] == 'true'
-                 Docker::Image.create('fromImage' => "#{ENV['CI_REGISTRY_IMAGE']}:#{ENV['CIPHERGURD_FLAVOUR']}-rootless-latest")
+                 Docker::Image.create('fromImage' => "#{ENV['CI_REGISTRY_IMAGE']}:#{ENV['CIPHERGUARD_FLAVOUR']}-rootless-latest")
                else
-                 Docker::Image.create('fromImage' => "#{ENV['CI_REGISTRY_IMAGE']}:#{ENV['CIPHERGURD_FLAVOUR']}-root-latest")
+                 Docker::Image.create('fromImage' => "#{ENV['CI_REGISTRY_IMAGE']}:#{ENV['CIPHERGUARD_FLAVOUR']}-root-latest")
                end
     else
       @image = Docker::Image.build_from_dir(
@@ -37,16 +37,16 @@ describe 'Dockerfile' do
 
   let(:nginx_conf)      { '/etc/nginx/nginx.conf' }
   let(:php_conf)        { '/etc/php/8.2/fpm/php.ini' }
-  let(:site_conf)       { '/etc/nginx/sites-enabled/nginx-cipherguar.conf' }
+  let(:site_conf)       { '/etc/nginx/sites-enabled/nginx-cipherguard.conf' }
   let(:supervisor_conf) do
     ['/etc/supervisor/conf.d/nginx.conf',
      '/etc/supervisor/conf.d/php.conf',
      '/etc/supervisor/conf.d/cron.conf']
   end
-  let(:cipherguar_home)   { '/usr/share/php/cipherguar' }
-  let(:cipherguar_tmp)    { '/var/lib/cipherguar/tmp' }
-  let(:cipherguar_image)  { "#{cipherguar_home}/webroot/img/public" }
-  let(:cipherguar_owner)  { 'www-data' }
+  let(:cipherguard_home)   { '/usr/share/php/cipherguard' }
+  let(:cipherguard_tmp)    { '/var/lib/cipherguard/tmp' }
+  let(:cipherguard_image)  { "#{cipherguard_home}/webroot/img/public" }
+  let(:cipherguard_owner)  { 'www-data' }
   let(:exposed_ports)   { [$http_port, $https_port] }
   let(:php_extensions)  do
     %w[
@@ -55,10 +55,10 @@ describe 'Dockerfile' do
     ]
   end
   let(:wait_for) { '/usr/bin/wait-for.sh' }
-  let(:jwt_conf) { "#{CIPHERGURD_CONFIG_PATH + '/jwt'}" }
+  let(:jwt_conf) { "#{CIPHERGUARD_CONFIG_PATH + '/jwt'}" }
   let(:jwt_key_pair) { ["#{jwt_conf}/jwt.key", "#{jwt_conf}/jwt.pem"] }
 
-  describe 'cipherguar required php extensions' do
+  describe 'cipherguard required php extensions' do
     it 'has php extensions installed' do
       php_extensions.each do |ext|
         expect(command("php --ri #{ext}").exit_status).to eq 0
@@ -75,7 +75,7 @@ describe 'Dockerfile' do
       supervisor_conf.each do |config|
         expect(file(config)).to exist
         if ENV['ROOTLESS'] == 'true'
-          expect(file(config)).to be_owned_by(cipherguar_owner)
+          expect(file(config)).to be_owned_by(cipherguard_owner)
         else
           expect(file(config)).to be_owned_by('root')
         end
@@ -98,37 +98,37 @@ describe 'Dockerfile' do
 
   describe 'entrypoint' do
     it 'is installed' do
-      expect(file('/docker-entrypoint.sh')).to exist and be_executable.by(cipherguar_owner)
+      expect(file('/docker-entrypoint.sh')).to exist and be_executable.by(cipherguard_owner)
       if ENV['ROOTLESS'] == 'true'
-        expect(file('/cipherguar/entrypoint-rootless.sh')).to exist and be_readable.by(cipherguar_owner)
+        expect(file('/cipherguard/entrypoint-rootless.sh')).to exist and be_readable.by(cipherguard_owner)
       else
-        expect(file('/cipherguar/entrypoint.sh')).to exist and be_readable.by(cipherguar_owner)
+        expect(file('/cipherguard/entrypoint.sh')).to exist and be_readable.by(cipherguard_owner)
       end
-      expect(file('/cipherguar/env.sh')).to exist and be_readable.by(cipherguar_owner)
-      expect(file('/cipherguar/entropy.sh')).to exist and be_readable.by(cipherguar_owner)
-      expect(file('/cipherguar/deprecated_paths.sh')).to exist and be_readable.by(cipherguar_owner)
+      expect(file('/cipherguard/env.sh')).to exist and be_readable.by(cipherguard_owner)
+      expect(file('/cipherguard/entropy.sh')).to exist and be_readable.by(cipherguard_owner)
+      expect(file('/cipherguard/deprecated_paths.sh')).to exist and be_readable.by(cipherguard_owner)
     end
   end
 
-  describe 'cipherguar directory structure' do
+  describe 'cipherguard directory structure' do
     it 'must exist and be directories' do
-      expect(file(cipherguar_home)).to be_a_directory
-      expect(file(cipherguar_tmp)).to be_a_directory
-      expect(file(cipherguar_image)).to be_a_directory
+      expect(file(cipherguard_home)).to be_a_directory
+      expect(file(cipherguard_tmp)).to be_a_directory
+      expect(file(cipherguard_image)).to be_a_directory
     end
 
     it 'must be owned by correct user' do
-      expect(file(cipherguar_home)).to be_owned_by('root')
-      expect(file(cipherguar_tmp)).to be_owned_by(cipherguar_owner)
-      expect(file(cipherguar_image)).to be_owned_by(cipherguar_owner)
+      expect(file(cipherguard_home)).to be_owned_by('root')
+      expect(file(cipherguard_tmp)).to be_owned_by(cipherguard_owner)
+      expect(file(cipherguard_image)).to be_owned_by(cipherguard_owner)
     end
 
     it 'must have the correct permissions on tmp' do
-      expect(file(cipherguar_tmp)).to be_mode 755
+      expect(file(cipherguard_tmp)).to be_mode 755
     end
 
     it 'must have the correct permissions on img' do
-      expect(file(cipherguar_image)).to be_mode 755
+      expect(file(cipherguard_image)).to be_mode 755
     end
   end
 
@@ -162,7 +162,7 @@ describe 'Dockerfile' do
     end
 
     it 'points to the correct root folder' do
-      expect(file(site_conf).content).to match "root #{cipherguar_home}/webroot"
+      expect(file(site_conf).content).to match "root #{cipherguard_home}/webroot"
     end
   end
 
@@ -199,7 +199,7 @@ describe 'Dockerfile' do
     it 'exists and has the correct permissions' do
       expect(file('/etc/environment')).to exist
       if ENV['ROOTLESS'] == 'true'
-        expect(file('/etc/environment')).to be_owned_by(cipherguar_owner)
+        expect(file('/etc/environment')).to be_owned_by(cipherguard_owner)
         expect(file('/etc/environment')).to be_mode 600
       else
         expect(file('/etc/environment')).to be_owned_by($root_user)
@@ -210,7 +210,7 @@ describe 'Dockerfile' do
 
   describe 'cron table' do
     it 'exists and executes the email job' do
-      expect(cron.table).to match(%r{CIPHERGURD_BASE_DIR/bin/cron})
+      expect(cron.table).to match(%r{CIPHERGUARD_BASE_DIR/bin/cron})
     end
   end
 end

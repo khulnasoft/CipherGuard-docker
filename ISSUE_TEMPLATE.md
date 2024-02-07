@@ -3,18 +3,18 @@
 Only use github issues for bugs.
 
 We will be more than happy to help you on the community forum for:
-- feature requests: https://community.khulnasoft.com/c/backlog
-- issues related to installations: https://community.khulnasoft.com/c/installation-issues
-- general questions: https://community.khulnasoft.com/c/uncategorized
+- feature requests: https://community.cipherguard.khulnasoft.com/c/backlog
+- issues related to installations: https://community.cipherguard.khulnasoft.com/c/installation-issues
+- general questions: https://community.cipherguard.khulnasoft.com/c/uncategorized
 
 If you still want to report a bug please take a look first on the other open/closed tickets to avoid duplicating issues.
 
 ### How to provide a good issue report:
 - Provide all the information you can collect about your problem
 - Provide log outputs from (some examples follow):
-  - /var/www/cipherguar/tmp/logs/error.log
+  - /var/www/cipherguard/tmp/logs/error.log
   - /var/log/nginx/error.log
-  - curl -vvvLk http://cipherguardomain
+  - curl -vvvLk http://cipherguarddomain
   - Any other sources you might think will help to solve the problem
 
 ### What you did :memo:

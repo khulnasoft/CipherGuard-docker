@@ -37,8 +37,8 @@ function manage_docker_env() {
   env_from_file 'DATASOURCES_DEFAULT_DATABASE'
   
   # Get docker secrets values if exist and set them on new paths
-  secret_file_to_path 'CIPHERGURD_GPG_SERVER_KEY_PUBLIC_FILE' "$gpg_public_key"
-  secret_file_to_path 'CIPHERGURD_GPG_SERVER_KEY_PRIVATE_FILE' "$gpg_private_key"
-  secret_file_to_path 'CIPHERGURD_SSL_SERVER_CERT_FILE' "$ssl_cert"
-  secret_file_to_path 'CIPHERGURD_SSL_SERVER_KEY_FILE' "$ssl_key"
+  secret_file_to_path 'CIPHERGUARD_GPG_SERVER_KEY_PUBLIC_FILE' "$gpg_public_key"
+  secret_file_to_path 'CIPHERGUARD_GPG_SERVER_KEY_PRIVATE_FILE' "$gpg_private_key"
+  secret_file_to_path 'CIPHERGUARD_SSL_SERVER_CERT_FILE' "$ssl_cert"
+  secret_file_to_path 'CIPHERGUARD_SSL_SERVER_KEY_FILE' "$ssl_key"
 }
